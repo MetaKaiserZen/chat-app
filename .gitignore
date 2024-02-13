@@ -33,3 +33,7 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# backend
+src/app/node_modules/
+src/app/.env

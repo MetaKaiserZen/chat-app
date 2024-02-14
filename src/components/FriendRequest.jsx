@@ -18,6 +18,8 @@ import axios from 'axios';
 
 const FriendRequest = ({ request, friendRequests, setFriendRequests }) =>
 {
+    const [friendRequest, setFriendRequest] = useState(false);
+
     const { id } = useContext(Type);
 
     const navigation = useNavigation();
@@ -28,6 +30,8 @@ const FriendRequest = ({ request, friendRequests, setFriendRequests }) =>
     {
         try
         {
+            setFriendRequest(true);
+
             const request = { id, destinatario }
 
             const { host } = await myPromise();
@@ -42,7 +46,11 @@ const FriendRequest = ({ request, friendRequests, setFriendRequests }) =>
             [
                 {
                     text: 'Aceptar',
-                    onPress: () => navigation.navigate('MensajeScreen', { destinatario: destinatario }),
+                    onPress: () => 
+                    (
+                        setFriendRequest(false),
+                        navigation.navigate('MensajeScreen', { destinatario: destinatario })
+                    ),
                     style: 'default'
                 }
             ]);
@@ -51,7 +59,14 @@ const FriendRequest = ({ request, friendRequests, setFriendRequests }) =>
         {
             console.log(e);
 
-            !e.response && Alert.alert('Error al aceptar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo', [{ text: 'Aceptar', style: 'default' }]);
+            !e.response && Alert.alert('Error al aceptar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo',
+            [
+                {
+                    text: 'Aceptar',
+                    onPress: () => setFriendRequest(false),
+                    style: 'default'
+                }
+            ]);
 
             if (e.response)
             {
@@ -60,8 +75,22 @@ const FriendRequest = ({ request, friendRequests, setFriendRequests }) =>
                 const { message } = data;
 
                 status === 500 ?
-                    Alert.alert('Error al aceptar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo', [{ text: 'Aceptar', style: 'default' }]) :
-                    Alert.alert('Mensaje', message);
+                    Alert.alert('Error al aceptar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo',
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setFriendRequest(false),
+                            style: 'default'
+                        }
+                    ]) :
+                    Alert.alert('Mensaje', message
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setFriendRequest(false),
+                            style: 'default'
+                        }
+                    ]);
             }
         }
     }
@@ -100,7 +129,7 @@ const FriendRequest = ({ request, friendRequests, setFriendRequests }) =>
             </Text>
 
             <Pressable
-                onPress={() => aceptarFriendRequest(id, request._id)}
+                onPress={() => !friendRequest && aceptarFriendRequest(id, request._id)}
                 style={
                 {
                     backgroundColor: '#0066B2',

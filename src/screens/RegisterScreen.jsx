@@ -22,6 +22,7 @@ const RegisterScreen = () =>
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [imagen, setImagen] = useState('');
+    const [register, setRegister] = useState(false);
 
     const navigation = useNavigation();
 
@@ -31,6 +32,8 @@ const RegisterScreen = () =>
     {
         try
         {
+            setRegister(true);
+
             const usuario =
             {
                 nombre: nombre,
@@ -56,7 +59,11 @@ const RegisterScreen = () =>
                 [
                     {
                         text: 'Volver',
-                        onPress: () => navigation.navigate('LoginScreen'),
+                        onPress: () =>
+                        (
+                            setRegister(false),
+                            navigation.navigate('LoginScreen')
+                        ),
                         style: 'default'
                     }
                 ]);
@@ -66,7 +73,19 @@ const RegisterScreen = () =>
         {
             console.log(e);
 
-            !e.response && Alert.alert('Error al enviar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo.', [{ text: 'Aceptar', style: 'default' }]);
+            setNombre('');
+            setEmail('');
+            setPassword('');
+            setImagen('');
+
+            !e.response && Alert.alert('Error al enviar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo.',
+            [
+                {
+                    text: 'Aceptar',
+                    onPress: () => setRegister(false),
+                    style: 'default'
+                }
+            ]);
 
             if (e.response)
             {
@@ -75,8 +94,22 @@ const RegisterScreen = () =>
                 const { message } = data;
 
                 status === 500 ?
-                    Alert.alert('Error al enviar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo.', [{ text: 'Aceptar', style: 'default' }]) :
-                    Alert.alert('Mensaje', message);
+                    Alert.alert('Error al enviar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo.',
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setRegister(false),
+                            style: 'default'
+                        }
+                    ]) :
+                    Alert.alert('Mensaje', message,
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setRegister(false),
+                            style: 'default'
+                        }
+                    ]);
             }
         }
     };
@@ -239,10 +272,10 @@ const RegisterScreen = () =>
                 </View>
 
                 <Pressable
-                    onPress={handleRegister}
+                    onPress={() => !register && handleRegister()}
                     style={
                     {
-                        width: 200,
+                        width: 150,
                         backgroundColor: '#4A55A2',
                         padding: 15,
                         marginTop: 50,

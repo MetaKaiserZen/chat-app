@@ -50,6 +50,7 @@ const MensajeScreen = () =>
     const [emoji, setEmoji] = useState(false);
     const [loading, setLoading] = useState(false);
     const [enviar, setEnviar] = useState(false);
+    const [eliminar, setEliminar] = useState(false);
     const [errorDestinatarios, setErrorDestinatarios] = useState(false);
     const [errorMensajes, setErrorMensajes] = useState(false);
 
@@ -204,9 +205,15 @@ const MensajeScreen = () =>
 
             setMensaje('');
             setImagen('');
-            setEnviar(false);
 
-            !e.response && Alert.alert('Error al enviar el mensaje', 'Se produjo un error inesperado. Vuelve a intentarlo.', [{ text: 'Aceptar', style: 'default' }]);
+            !e.response && Alert.alert('Error al enviar el mensaje', 'Se produjo un error inesperado. Vuelve a intentarlo.',
+            [
+                {
+                    text: 'Aceptar',
+                    onPress: () => setEnviar(false),
+                    style: 'default'
+                }
+            ]);
 
             if (e.response)
             {
@@ -215,8 +222,22 @@ const MensajeScreen = () =>
                 const { message } = data;
 
                 status === 500 ?
-                    Alert.alert('Error al eliminar el mensaje', 'Se produjo un error inesperado. Vuelve a intentarlo', [{ text: 'Aceptar', style: 'default' }]) :
-                    Alert.alert('Mensaje', message);
+                    Alert.alert('Error al eliminar el mensaje', 'Se produjo un error inesperado. Vuelve a intentarlo',
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setEnviar(false),
+                            style: 'default'
+                        }
+                    ]) :
+                    Alert.alert('Mensaje', message,
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setEnviar(false),
+                            style: 'default'
+                        }
+                    ]);
             }
         }
     }
@@ -225,6 +246,8 @@ const MensajeScreen = () =>
     {
         try
         {
+            setEliminar(true);
+
             const request = { mensajesArray }
 
             const { host } = await myPromise();
@@ -232,6 +255,8 @@ const MensajeScreen = () =>
             const { status } = await axios.post(`${host}/mensajes/eliminar`, request);
 
             status === 200 && setMensajesSeleccionados((seleccionados) => seleccionados.filter((id) => !mensajesArray.includes(id)));
+
+            status === 200 && setEliminar(false);
 
             status === 200 && listarMensaje();
         }
@@ -241,7 +266,14 @@ const MensajeScreen = () =>
 
             setMensajesSeleccionados([]);
 
-            !e.response && Alert.alert('Error al eliminar los mensajes', 'Se produjo un error inesperado. Vuelve a intentarlo.', [{ text: 'Aceptar', style: 'default' }]);
+            !e.response && Alert.alert('Error al eliminar los mensajes', 'Se produjo un error inesperado. Vuelve a intentarlo.',
+            [
+                {
+                    text: 'Aceptar',
+                    onPress: () => setEliminar(false),
+                    style: 'default'
+                }
+            ]);
 
             if (e.response)
             {
@@ -250,8 +282,22 @@ const MensajeScreen = () =>
                 const { message } = data;
 
                 status === 500 ?
-                    Alert.alert('Error al eliminar los mensajes', 'Se produjo un error inesperado. Vuelve a intentarlo', [{ text: 'Aceptar', style: 'default' }]) :
-                    Alert.alert('Mensaje', message);
+                    Alert.alert('Error al eliminar los mensajes', 'Se produjo un error inesperado. Vuelve a intentarlo',
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setEliminar(false),
+                            style: 'default'
+                        }
+                    ]) :
+                    Alert.alert('Mensaje', message,
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setEliminar(false),
+                            style: 'default'
+                        }
+                    ]);
             }
         }
     }
@@ -385,7 +431,7 @@ const MensajeScreen = () =>
                         gap: 10
                     }}
                 >
-                    <MaterialIcons name="delete" size={32} color="black" onPress={() => eliminarMensaje(mensajesSeleccionados)} />
+                    <MaterialIcons name="delete" size={32} color="black" onPress={() => !eliminar && eliminarMensaje(mensajesSeleccionados)} />
                 </View>
             ) : null
         });

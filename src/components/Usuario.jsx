@@ -26,6 +26,7 @@ const Usuario = ({ usuario }) =>
     const [loadingDestinatarios, setLoadingDestinatarios] = useState(false);
     const [friendRequests, setFriendRequests] = useState([]);
     const [loadingFriendRequests, setLoadingFriendRequests] = useState(false);
+    const [friendRequest, setFriendRequest] = useState(false);
 
     const { id } = useContext(Type);
 
@@ -73,6 +74,8 @@ const Usuario = ({ usuario }) =>
     {
         try
         {
+            setFriendRequest(true);
+
             const request = { id, destinatario }
 
             const { host } = await myPromise();
@@ -83,13 +86,27 @@ const Usuario = ({ usuario }) =>
 
             status === 201 && listarFriendRequest();
 
-            status === 201 && Alert.alert('Mensaje', message, [{ text: 'Aceptar', style: 'default' }]);
+            status === 201 && Alert.alert('Mensaje', message,
+            [
+                {
+                    text: 'Aceptar',
+                    onPress: () => setFriendRequest(false),
+                    style: 'default'
+                }
+            ]);
         }
         catch (e)
         {
             console.log(e);
 
-            !e.response && Alert.alert('Error al enviar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo', [{ text: 'Aceptar', style: 'default' }]);
+            !e.response && Alert.alert('Error al enviar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo',
+            [
+                {
+                    text: 'Aceptar',
+                    onPress: () => setFriendRequest(false),
+                    style: 'default'
+                }
+            ]);
 
             if (e.response)
             {
@@ -98,8 +115,22 @@ const Usuario = ({ usuario }) =>
                 const { message } = data;
 
                 status === 500 ?
-                    Alert.alert('Error al enviar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo', [{ text: 'Aceptar', style: 'default' }]) :
-                    Alert.alert('Mensaje', message);
+                    Alert.alert('Error al enviar la solicitud', 'Se produjo un error inesperado. Vuelve a intentarlo',
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setFriendRequest(false),
+                            style: 'default'
+                        }
+                    ]) :
+                    Alert.alert('Mensaje', message
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setFriendRequest(false),
+                            style: 'default'
+                        }
+                    ]);
             }
         }
     }
@@ -199,7 +230,7 @@ const Usuario = ({ usuario }) =>
                     ) :
                     (
                         <Pressable
-                            onPress={() => crearFriendRequest(id, usuario._id)}
+                            onPress={() => !friendRequest && crearFriendRequest(id, usuario._id)}
                             style={
                             {
                                 backgroundColor: '#567189',

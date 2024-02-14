@@ -22,15 +22,23 @@ const LoginScreen = () =>
 {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [login, setLogin] = useState(false);
 
     const navigation = useNavigation();
 
     const myPromise = useHost();
 
+    const appEnv = process.env.EXPO_PUBLIC_APP_ENV;
+    const deployHost = process.env.EXPO_PUBLIC_DEPLOY_HOST;
+    const apiKey = process.env.EXPO_PUBLIC_API_KEY;
+    const apiSecret = process.env.EXPO_PUBLIC_API_SECRET;
+
     const handleLogin = async () =>
     {
         try
         {
+            setLogin(true);
+
             const usuario = { email, password }
 
             const { host } = await myPromise();
@@ -50,7 +58,11 @@ const LoginScreen = () =>
                 [
                     {
                         text: 'Aceptar',
-                        onPress: () => navigation.navigate('HomeScreen'),
+                        onPress: () =>
+                        (
+                            setLogin(false),
+                            navigation.navigate('HomeScreen')
+                        ),
                         style: 'default'
                     }
                 ]);
@@ -60,7 +72,17 @@ const LoginScreen = () =>
         {
             console.log(e);
 
-            !e.response && Alert.alert('Error de inicio de sesión', 'Se produjo un error inesperado. Intenta iniciar sesión de nuevo.', [{ text: 'Aceptar', style: 'default' }]);
+            setEmail('');
+            setPassword('');
+
+            !e.response && Alert.alert('Error de inicio de sesión', 'Se produjo un error inesperado. Intenta iniciar sesión de nuevo.',
+            [
+                {
+                    text: 'Aceptar',
+                    onPress: () => setLogin(false),
+                    style: 'default'
+                }
+            ]);
 
             if (e.response)
             {
@@ -69,8 +91,22 @@ const LoginScreen = () =>
                 const { message } = data;
 
                 status === 500 ?
-                    Alert.alert('Error de inicio de sesión', 'Se produjo un error inesperado. Intenta iniciar sesión de nuevo.', [{ text: 'Aceptar', style: 'default' }]) :
-                    Alert.alert('Mensaje', message);
+                    Alert.alert('Error de inicio de sesión', 'Se produjo un error inesperado. Intenta iniciar sesión de nuevo.',
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setLogin(false),
+                            style: 'default'
+                        }
+                    ]) :
+                    Alert.alert('Mensaje', message,
+                    [
+                        {
+                            text: 'Aceptar',
+                            onPress: () => setLogin(false),
+                            style: 'default'
+                        }
+                    ]);
             }
         }
     };
@@ -79,6 +115,17 @@ const LoginScreen = () =>
     {
         try
         {
+            if (!appEnv || !deployHost || !apiKey || !apiSecret)
+            {
+                return Alert.alert('Error de la aplicación', 'La aplicación no se pudo iniciar correctamente.',
+                [
+                    {
+                        text: 'Aceptar',
+                        style: 'default'
+                    }
+                ]);
+            }
+
             const token = await AsyncStorage.getItem('authToken');
 
             token && navigation.replace('HomeScreen');
@@ -196,10 +243,10 @@ const LoginScreen = () =>
                 </View>
 
                 <Pressable
-                    onPress={handleLogin}
+                    onPress={() => !login && handleLogin()}
                     style={
                     {
-                        width: 200,
+                        width: 150,
                         backgroundColor: '#4A55A2',
                         padding: 15,
                         marginTop: 50,

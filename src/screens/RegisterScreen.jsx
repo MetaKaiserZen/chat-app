@@ -298,7 +298,7 @@ const RegisterScreen = () =>
                 </Pressable>
 
                 <Pressable
-                    onPress={(() => navigation.goBack())}
+                    onPress={() => navigation.goBack()}
                     style={{ marginTop: 15 }}
                 >
                     <Text

@@ -115,7 +115,7 @@ const LoginScreen = () =>
     {
         try
         {
-            if (!appEnv || !deployHost || !apiKey || !apiSecret)
+            if (appEnv === undefined || !deployHost || !apiKey || !apiSecret)
             {
                 return Alert.alert('Error de la aplicación', 'La aplicación no se pudo iniciar correctamente.',
                 [
@@ -269,7 +269,7 @@ const LoginScreen = () =>
                 </Pressable>
 
                 <Pressable
-                    onPress={(() => navigation.navigate('RegisterScreen'))}
+                    onPress={() => navigation.navigate('RegisterScreen')}
                     style={{ marginTop: 15 }}
                 >
                     <Text
@@ -280,7 +280,7 @@ const LoginScreen = () =>
                             fontSize: 15
                         }}
                     >
-                        {"Dont't have an account? Sign Up"}
+                        {"Don't have an account? Sign Up"}
                     </Text>
                 </Pressable>
             </KeyboardAvoidingView>

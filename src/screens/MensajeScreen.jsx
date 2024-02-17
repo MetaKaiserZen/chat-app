@@ -377,7 +377,7 @@ const MensajeScreen = () =>
                         gap: 10
                     }}
                 >
-                    <Ionicons name="arrow-back" size={32} color="black" onPress={() => navigation.goBack()} />
+                    <Ionicons name="arrow-back" size={32} color="black" onPress={() => navigation.navigate('DestinatarioScreen')} />
 
                     {
                         mensajesSeleccionados.length > 0 ?
@@ -471,7 +471,7 @@ const MensajeScreen = () =>
                                                 seleccionado && { width: '100%', backgroundColor: '#F0FFFF' }
                                             ]}
                                         >
-                                            <Text style={{ fontSize: 15, textAlign: seleccionado ? 'right' : 'left' }}>{mensaje?.mensaje}</Text>
+                                            <Text style={{ fontSize: 15, textAlign: mensaje?.usuario?._id === id ? 'right' : 'left' }}>{mensaje?.mensaje}</Text>
                                             <Text style={styles.timestamp}>
                                                 {formatTime(mensaje?.created_at)}
                                             </Text>
@@ -610,7 +610,7 @@ const styles = StyleSheet.create(
         alignSelf: 'flex-end',
         backgroundColor: '#DCF8C6',
         padding: 7.5,
-        maxWidth: '50%',
+        maxWidth: '93.5%',
         borderRadius: 7.5,
         marginHorizontal: 12.5,
         marginVertical: 5
@@ -620,7 +620,7 @@ const styles = StyleSheet.create(
         alignSelf: 'flex-start',
         backgroundColor: 'white',
         padding: 7.5,
-        maxWidth: '50%',
+        maxWidth: '93.5%',
         borderRadius: 7.5,
         marginHorizontal: 12.5,
         marginVertical: 5
